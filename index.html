@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Who is my GSR?</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+    <div class="container">
+      <header class="row">
+        <div class="col-sm-14">
+          <h1 class="text-center text-uppercase">Who is my multimedia GSR?</h1>
+        </div>
+      </header>
+    </div>
+
+    <section class="container">
+      <div class="row">
+        <div class="col-sm-14">
+          <img src="" class="img-thumbnail center-block" width="200"  height="auto" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-2 text-center">
+          <h2 id="gsrname">Jeremy Rue</h2>
+          <h3 id="location">Located in room B1<br> 4:30pm to 9pm</h3>
+          <h4 id="contact">Contact at <a href="" title="Reveal this e-mail address">p...</a>@gmail.com</h4>
+        </div>
+      </div>
+    </section>
+
+    <!-- <script src="js/tabletop.js"></script> -->
+    <script src="js/d3.v3.min.js"></script>
+    <script>
+    
+      var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1Ax1ZlE7BerAoeByOH0IHzOaVJejs3erunblPEda97rc/pubhtml';
+
+      var today = d3.time.format("%A")(new Date());
+
+      var encryptedEmails = {
+        jas : "http://www.google.com/recaptcha/mailhide/d?k=01hBbLO4eNXiiwqvDEWvxt3A==&c=EUCSbneQ-3o5SXxEjWjqEiS2PnkRgHqjK9ZyBTbPtmk=",
+        bea : "http://www.google.com/recaptcha/mailhide/d?k=01hBbLO4eNXiiwqvDEWvxt3A==&c=KTCe_waDJU5hoGRivIz-BgAB5neuQXC5tVhmbe0IZm0=",
+        ale : "http://www.google.com/recaptcha/mailhide/d?k=01qLQsRgwCZlWkx4gdb8azZw==&c=YuXw8FSNnEdOzOVLQztu2Qo4cXIsCCYho4yF7ExkhqY=",
+        kev : "http://www.google.com/recaptcha/mailhide/d?k=01JQA5gVKHbIxoMQdipVZpdw==&c=L6vbYLzxOksfiKakSmMLQYbunfZHRMtONY0WsQF3aGU="
+      }
+
+      var photos = {
+        jas : "jason.jpg",
+        bea : "beatrice.jpg",
+        ale : "alexandra.jpg",
+        kev : "kevin.jpg"
+      }
+
+      d3.csv("data.csv", changeGSR);
+
+      //Tabletop.init( { key: public_spreadsheet_url, callback: showInfo, simpleSheet: true } );
+
+      function changeGSR(d){
+
+        console.log(d);
+
+        if(d[0][today] === ""){
+
+          d3.select("#gsrname")
+            .text("No GSR on duty today");
+
+          d3.select("#location")
+            .text("");
+
+          d3.select("img")
+            .attr("src", "images/nobody.jpg");
+
+          d3.select("#contact")
+            .remove();
+
+        } else {
+
+          var firstname = d[0][today].substring(0, 3).toLowerCase();
+          
+          //console.log(firstname);
+          //console.log(encryptedEmails[firstname]);
+
+          d3.select("#gsrname")
+            .text(d[0][today]);
+
+          d3.select("#location")
+            .html("Located in room " + d[1][today] + "<br>" + d[2][today]);
+
+          d3.select("img")
+            .attr("src", "images/" + photos[firstname]);
+
+          d3.select("a")
+            .attr("href", encryptedEmails[firstname])
+            .text(firstname.charAt(0) + "...")
+            .on('click', function(e){
+              d3.event.preventDefault();
+              window.open(encryptedEmails[firstname], '_blank', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); 
+              return false;
+            });
+
+        }
+
+      }
+
+
+    </script>
+  </body>
+</html>
